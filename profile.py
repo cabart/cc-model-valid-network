@@ -9,6 +9,8 @@ Will follow soon.
 import geni.portal as portal
 # Import the ProtoGENI library.
 import geni.rspec.pg as pg
+# Import the Emulab specific extensions.
+import geni.rspec.emulab as emulab
 
 # Create a portal context.
 pc = portal.Context()
@@ -52,13 +54,6 @@ for i in range(params.sender):
     link = request.L1Link("link" + str(i))
     link.addInterface(iface)
     link.addInterface(swiface)
-
-
-
-
-
-# Add link between nodes
-link1 = request.Link(members = [node1, node2])
 
 # Print the RSpec to the enclosing page.
 pc.printRequestRSpec(request)

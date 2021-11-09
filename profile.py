@@ -28,17 +28,18 @@ if params.sender < 1 or params.sender > 10:
     pc.reportError(portal.ParameterError("Number of senders should be between 1 and 10"))
 
 # Add switch
-switch = request.Switch("sw")
+switch = request.Switch("switch1")
+sw_send_iface = switch.addInterface()
+sw_rcv_iface = switch.addInterface()
 
 # Add receiver VM
 nodeRcv = request.XenVM("rcv")
 rcv_iface = nodeRcv.addInterface()
 
 # Create link between switch and receiver node
-swiface = switch.addInterface()
 link = request.L1Link("rcvlink")
 link.addInterface(rcv_iface)
-link.addInterface(swiface)
+link.addInterface(sw_rcv_iface)
 
 # Add sender VMs
 for i in range(params.sender):
@@ -48,12 +49,10 @@ for i in range(params.sender):
     iface.addAddress(pg.IPv4Address("192.168.1." + str(i),"255.255.255.0"))
     # Add startup script
     node.addService(pg.Execute(shell="sh", command="/local/repository/startup.sh"))
-    # Add interface at switch
-    swiface = switch.addInterface()
     # Add link to switch
     link = request.L1Link("link" + str(i))
     link.addInterface(iface)
-    link.addInterface(swiface)
+    link.addInterface(sw_send_iface)
 
 # Print the RSpec to the enclosing page.
 pc.printRequestRSpec(request)

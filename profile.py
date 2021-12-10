@@ -34,7 +34,7 @@ if params.sender < 1 or params.sender > 10:
 # Add switch
 #switch = request.Switch("switch1")
 switch = request.RawPC("ovs")
-sw_rcv_iface = switch.addInterface()
+#sw_rcv_iface = switch.addInterface()
 
 # Add receiver VM
 rcvName = "rcv"
@@ -44,12 +44,13 @@ else:
     nodeRcv = request.XenVM(rcvName)
 
 rcv_iface = nodeRcv.addInterface()
-#rcv_iface.addAddress(pg.IPv4Address("192.168.1.0","255,255,255,0"))
+rcv_iface.addAddress(pg.IPv4Address("10.0.0.1","255,255,255,0"))
 
 # Create link between switch and receiver node
-link = request.L1Link("rcvlink")
-link.addInterface(rcv_iface)
-link.addInterface(sw_rcv_iface)
+#link = request.L1Link("rcvlink")
+#link.addInterface(rcv_iface)
+#link.addInterface(sw_rcv_iface)
+link = request.Link("link1", members=[rcv_iface,switch])
 
 # Add sender VMs
 for i in range(params.sender):
@@ -60,15 +61,15 @@ for i in range(params.sender):
     else:
         node = request.XenVM(nodeName)
     iface = node.addInterface()
-    #iface.addAddress(pg.IPv4Address("192.168.1." + str(i),"255.255.255.0"))
+    iface.addAddress(pg.IPv4Address("10.0.0." + str(i+1),"255.255.255.0"))
     # Add startup script
     node.addService(pg.Execute(shell="sh", command="/local/repository/startup.sh"))
     # Add interface to switch
-    sw_send_iface = switch.addInterface()
+    #sw_send_iface = switch.addInterface()
     # Add link to switch
-    link = request.L1Link("link" + str(i))
-    link.addInterface(iface)
-    link.addInterface(sw_send_iface)
+    link = request.Link("link" + str(i+1), members=[switch,iface])
+    #link.addInterface(iface)
+    #link.addInterface(sw_send_iface)
 
 # Print the RSpec to the enclosing page.
 pc.printRequestRSpec(request)

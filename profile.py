@@ -1,5 +1,5 @@
 """
-This profile describes n sender nodes connected through one switch to a single receiver node
+This profile describes n sender nodes connected through one software switch (Open VSwitch) to a single receiver node
 
 Instructions:
 Will follow soon.
@@ -19,6 +19,9 @@ pc = portal.Context()
 pc.defineParameter("usePhysical","Use physical nodes instead of VMs",portal.ParameterType.BOOLEAN,False)
 pc.defineParameter("sender","Number of sender nodes", portal.ParameterType.INTEGER, 2)
 
+# Fixed parameters
+image = 'urn:publicid:IDN+emulab.net+image+emulab-ops//UBUNTU20-64-STD'
+
 # Retrieve user input from instantiation
 params = pc.bindParameters()
 
@@ -29,7 +32,8 @@ if params.sender < 1 or params.sender > 10:
     pc.reportError(portal.ParameterError("Number of senders should be between 1 and 10"))
 
 # Add switch
-switch = request.Switch("switch1")
+#switch = request.Switch("switch1")
+switch = request.RawPC("ovs")
 sw_rcv_iface = switch.addInterface()
 
 # Add receiver VM

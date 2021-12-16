@@ -16,9 +16,13 @@ sudo ovs-vsctl add-br br0
 
 for i in $(seq 1 $sender);
 do
-	echo "$i"
 	# maybe should add "2>> /tmp/startup.txt" to analyse potential errors
-	ifconfig eth$i 0 
+	sudo ifconfig eth$i 0 
+done
+
+for i in $(seq 1 $sender);
+do
+	# maybe should add "2>> /tmp/startup.txt" to analyse potential errors
 	sudo ovs-vsctl add-port br0 eth$i
 done
 
